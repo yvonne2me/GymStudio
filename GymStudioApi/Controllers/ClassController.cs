@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
+using AutoMapper;
 using GymStudioApi.Logging;
 using GymStudioApi.Models.API;
+using GymStudioApi.Models.Domain;
 using GymStudioApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,16 +15,18 @@ namespace GymStudioApi.Controllers
     {
         IFileLogger logger;
         IClassService classService;
+        IMapper mapper;
 
-        public ClassController(IFileLogger logger, IClassService classService)
+        public ClassController(IFileLogger logger, IClassService classService, IMapper mapper)
         {
             this.logger = logger;
             this.classService = classService;
+            this.mapper = mapper;
         }
         
         [HttpPost]
         [Produces("application/json")]
-        public IActionResult Post([FromBody] ClassRequest classRequest)
+        public async Task<IActionResult> Post([FromBody] ClassRequest classRequest)
         {
             if(classRequest == null)
             {
@@ -29,10 +34,13 @@ namespace GymStudioApi.Controllers
                 return BadRequest("No Class information provided");
             }
 
-            var response = new ClassResponse();
+            var createClassRequest = this.mapper.Map<Class>(classRequest);
+
+            Class response = null;
+
             try
             {
-                response = classService.CreateClass(classRequest);  
+                response = await classService.CreateClass(createClassRequest);
             }
             catch(Exception ex)
             {
@@ -40,6 +48,19 @@ namespace GymStudioApi.Controllers
             }
 
             return Ok(response);
+        }
+
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> Get(Guid classId)
+        {
+            //Validate classId
+            //Call ClassService
+            //return Class
+
+            return Ok(new Class(){Id = classId, ClassName = "New Class Name"});
         }
     }
 }

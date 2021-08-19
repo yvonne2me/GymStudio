@@ -2,27 +2,35 @@ using Xunit;
 using Moq;
 using GymStudioApi.Logging;
 using GymStudioApi.Models.API;
+using GymStudioApi.Models.Domain;
 using GymStudioApi.Services;
 using GymStudioApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
+using AutoMapper;
 
 namespace GymStudioUnitTests.ControllerTests
 {
     public class ClassControllerTests
     {
+
+        Mock<IFileLogger> mockLogger;
+        Mock<IClassService> mockClassService;
+        Mock<IMapper> mockMapper;
+        ClassController classController;
+        ClassRequest classRequest;
+
         [Fact]
-        public void post_returns_bad_request_when_request_is_null()
+        public async void ClassController_Post_NullRequest_Returns_BadRequest()
         {
             //Assign
-            var mockLogger = new Mock<IFileLogger>();
-            var mockClassService = new Mock<IClassService>();
-
-            var classController = new ClassController(mockLogger.Object, mockClassService.Object);
+            SetupTestInfo();
+            this.classController = new ClassController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
             ClassRequest classRequest = null;
 
             //Act
-            var response = classController.Post(classRequest);
+            var response = await classController.Post(classRequest);
             var badResponse = response as BadRequestObjectResult;
 
             //Assert
@@ -31,23 +39,14 @@ namespace GymStudioUnitTests.ControllerTests
         }
 
         [Fact]
-        public void post_returns_ok_when_request_is_valid()
+        public async void ClassController_Post_ValidRequest_Returns_OK()
         {
             //Assign
-            var mockLogger = new Mock<IFileLogger>();
-            var mockClassService = new Mock<IClassService>();
-
-            var classController = new ClassController(mockLogger.Object, mockClassService.Object);
-            ClassRequest classRequest = new ClassRequest()
-            {
-                ClassName = "ClassName",
-                Start_Date = System.DateTime.Now,
-                End_Date = System.DateTime.Now.AddDays(1),
-                Capacity = 10
-            };
+            SetupTestInfo();
+            this.classController = new ClassController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = classController.Post(classRequest);
+            var response = await classController.Post(classRequest);
             var okResponse = response as OkObjectResult;
 
             //Assert
@@ -55,28 +54,33 @@ namespace GymStudioUnitTests.ControllerTests
         }
 
         [Fact]
-        public void post_catches_exception_and_returns_bad_request()
+        public async void ClassController_Post_ExceptionThrown_Returns_BadRequest()
         {
             //Assign
-            var mockLogger = new Mock<IFileLogger>();
-            var mockClassService = new Mock<IClassService>();
-            mockClassService.Setup(s => s.CreateClass(It.IsAny<ClassRequest>())).Throws(new Exception());
+            SetupTestInfo();
+            this.mockClassService.Setup(s => s.CreateClass(It.IsAny<Class>())).Throws(new Exception());
+            this.classController = new ClassController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
-            var classController = new ClassController(mockLogger.Object, mockClassService.Object);
-            ClassRequest classRequest = new ClassRequest()
+            //Act
+            var response = await classController.Post(classRequest);
+            var badResponse = response as BadRequestObjectResult;
+
+            //Assert
+            Assert.Equal(400, badResponse.StatusCode);
+        }
+
+        private void SetupTestInfo()
+        {
+            this.mockLogger = new Mock<IFileLogger>();
+            this.mockClassService = new Mock<IClassService>();
+            this.mockMapper = new Mock<IMapper>();
+            this.classRequest = new ClassRequest()
             {
                 ClassName = "ClassName",
                 Start_Date = System.DateTime.Now,
                 End_Date = System.DateTime.Now.AddDays(1),
                 Capacity = 10
             };
-
-            //Act
-            var response = classController.Post(classRequest);
-            var badResponse = response as BadRequestObjectResult;
-
-            //Assert
-            Assert.Equal(400, badResponse.StatusCode);
         }
     }
 }

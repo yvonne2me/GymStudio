@@ -1,11 +1,12 @@
 using System;
-using GymStudioApi.Models.API;
+using System.Threading.Tasks;
+using GymStudioApi.Models.Domain;
 
 namespace GymStudioApi.Services
 {
     public interface IClassService
     {
-        ClassResponse CreateClass(ClassRequest gymClassRequest);
+        Task<Class> CreateClass(Class classRequest);
         bool DeleteClass(Guid classId);
     }
 }

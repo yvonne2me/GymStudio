@@ -21,13 +21,13 @@ namespace GymStudioApi.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<bool> SaveClass(Class newClass)
+        public async Task<Class> SaveClass(Class newClass)
         {
             _context.Classes.Add(newClass);
 
             if(await _context.SaveChangesAsync() > 0)
             {
-                return true;
+                return newClass;
             }
             else
             {

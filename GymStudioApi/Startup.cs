@@ -1,5 +1,9 @@
+using AutoMapper;
 using GymStudioApi.Logging;
+using GymStudioApi.Mappers;
 using GymStudioApi.Models;
+using GymStudioApi.Repositories;
+using GymStudioApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +32,21 @@ namespace GymStudio
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GymStudio", Version = "v1" });
             });
+
+            // Auto Mapper
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+            //Services
+            services.AddScoped<IClassService, ClassService>();
+
+            //Repositories
+            services.AddScoped<IClassRepository, ClassRepository>();
 
             //Logging
             services.AddTransient<IFileLogger, FileLogger>();

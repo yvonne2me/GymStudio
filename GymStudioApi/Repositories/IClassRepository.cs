@@ -6,7 +6,7 @@ namespace GymStudioApi.Repositories
 {
     public interface IClassRepository
     {
-        Task<bool> SaveClass(Class newClass);
+        Task<Class> SaveClass(Class newClass);
         Task<Class> GetClass(Guid classId);
     }
 }
