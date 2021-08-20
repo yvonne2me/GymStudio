@@ -78,13 +78,14 @@ namespace GymStudioUnitTests.RepositoryTests
             //Assign
             SetupTestInfo();
             var sut = new ClassRepository(mockLogger.Object, _context);
+            var numberOfClassSessions = 4;
 
             Class saveNewClass = new Class()
             {
                 Id = Guid.NewGuid(),
                 ClassName = "SaveNewClass",
                 Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(4),
+                End_Date = DateTime.Now.AddDays(numberOfClassSessions),
                 Capacity = 2
             };
 
@@ -93,9 +94,36 @@ namespace GymStudioUnitTests.RepositoryTests
             var classSessionResponse = await sut.GetClassSessions(saveNewClass.Id);
 
             //Assert
-            Assert.Equal(4, classSessionResponse.Count);
+            Assert.Equal(numberOfClassSessions, classSessionResponse.Count);
         }
 
+        [Fact]
+        public async void ClassRepository_SaveClass_CreatesClassSessions_WithCorrectCapacity()
+        {
+            //Assign
+            SetupTestInfo();
+            var sut = new ClassRepository(mockLogger.Object, _context);
+            var expectedCapacity = 3;
+
+            Class saveNewClass = new Class()
+            {
+                Id = Guid.NewGuid(),
+                ClassName = "SaveNewClass",
+                Start_Date = DateTime.Now,
+                End_Date = DateTime.Now.AddDays(4),
+                Capacity = expectedCapacity
+            };
+
+            //Act
+            await sut.SaveClass(saveNewClass);
+            var classSessionResponse = await sut.GetClassSessions(saveNewClass.Id);
+
+            //Assert
+            foreach(var classSession in classSessionResponse)
+            {
+                Assert.Equal(expectedCapacity, classSession.Capacity);
+            }
+        }
         private void SetupTestInfo()
         {
             mockLogger = new Mock<IFileLogger>();
@@ -110,8 +138,8 @@ namespace GymStudioUnitTests.RepositoryTests
                 {
                     Id = Guid.NewGuid(),
                     ClassName = "TestClassName" + i,
-                    Start_Date = DateTime.Now.AddDays(1),
-                    End_Date = DateTime.Now,
+                    Start_Date = DateTime.Now,
+                    End_Date = DateTime.Now.AddDays(1),
                     Capacity = 10
                 };
 
@@ -121,6 +149,5 @@ namespace GymStudioUnitTests.RepositoryTests
             context.SaveChanges();
             _context = context;
         }
-
     }
 }

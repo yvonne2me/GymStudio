@@ -42,8 +42,14 @@ namespace GymStudioApi.Controllers
             {
                 response = await classService.CreateClass(createClassRequest);
             }
+            catch(ArgumentException argumentException)
+            {
+                return BadRequest(argumentException.Message);
+            }
             catch(Exception ex)
             {
+                //Log all other exceptions
+                //Return a 500?
                 return BadRequest(ex.Message);
             }
 

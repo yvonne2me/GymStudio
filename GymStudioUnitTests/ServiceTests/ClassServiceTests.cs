@@ -13,6 +13,7 @@ namespace GymStudioUnitTests.ServiceTests
         [Fact]
         public async void ClassService_CreateClass_StartDate_Before_EndDate_ThrowsException()
         {
+            //Assign
             Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
             var sut = new ClassService(mockClassRepository.Object);
 
@@ -25,10 +26,36 @@ namespace GymStudioUnitTests.ServiceTests
                 Capacity = 10
             };
 
+            //Act
             Func<Task> act = () => sut.CreateClass(newClass);
 
+            //Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(act);
             Assert.Equal("Start_Date cannot occur before End_Date", exception.Message);
+        }
+
+        [Fact]
+        public async void ClassService_CreateClass_ClassNameNotProvided_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                Id = Guid.NewGuid(),
+                ClassName = null,
+                Start_Date = DateTime.Now,
+                End_Date = DateTime.Now.AddDays(1),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("A Class Name is required to create classes", exception.Message);
         }
 
         [Fact]
@@ -67,7 +94,7 @@ namespace GymStudioUnitTests.ServiceTests
             };
 
             Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
-            mockClassRepository.Setup(r => r.GetClass(It.IsAny<Guid>())).ReturnsAsync(newClass);
+            mockClassRepository.Setup(r => r.GetClassById(It.IsAny<Guid>())).ReturnsAsync(newClass);
             var sut = new ClassService(mockClassRepository.Object);
 
             //Act
@@ -76,5 +103,84 @@ namespace GymStudioUnitTests.ServiceTests
             //Assert
             Assert.Equal(newClass.Id, classResponse.Id);
         }
+
+        [Fact]
+        public async void ClassService_CreateClass_ClassNameAlreadyExists_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            mockClassRepository.Setup(r => r.GetClassByName(It.IsAny<string>())).ReturnsAsync(new Class());
+            mockClassRepository.Setup(r => r.GetClassById(It.IsAny<Guid>())).ReturnsAsync((Class)null);
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                Id = Guid.NewGuid(),
+                ClassName = "TestClassName",
+                Start_Date = DateTime.Now,
+                End_Date = DateTime.Now.AddDays(1),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("Class already exists - Please review the details that you provided.", exception.Message);
+        }
+
+        [Fact]
+        public async void ClassService_CreateClass_ClassIdAlreadyExists_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            mockClassRepository.Setup(r => r.GetClassByName(It.IsAny<string>())).ReturnsAsync((Class)null);
+            mockClassRepository.Setup(r => r.GetClassById(It.IsAny<Guid>())).ReturnsAsync(new Class());
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                Id = Guid.NewGuid(),
+                ClassName = "TestClassName",
+                Start_Date = DateTime.Now,
+                End_Date = DateTime.Now.AddDays(1),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("Class already exists - Please review the details that you provided.", exception.Message);
+        }
+
+                [Fact]
+        public async void ClassService_CreateClass_BothClassIdAndNameAlreadyExist_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            mockClassRepository.Setup(r => r.GetClassByName(It.IsAny<string>())).ReturnsAsync(new Class());
+            mockClassRepository.Setup(r => r.GetClassById(It.IsAny<Guid>())).ReturnsAsync(new Class());
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                Id = Guid.NewGuid(),
+                ClassName = "TestClassName",
+                Start_Date = DateTime.Now,
+                End_Date = DateTime.Now.AddDays(1),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("Class already exists - Please review the details that you provided.", exception.Message);
+        }
+        
     }
 }

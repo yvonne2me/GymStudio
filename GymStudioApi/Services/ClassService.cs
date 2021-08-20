@@ -21,6 +21,8 @@ namespace GymStudioApi.Services
 
             newClass.Id = Guid.NewGuid();
 
+            await CheckIfClassAlreadyExists(newClass);
+
             return await this.classRepository.SaveClass(newClass);
         }
 
@@ -31,15 +33,33 @@ namespace GymStudioApi.Services
 
         public async Task<Class> GetClass(Guid classId)
         {
-            return await this.classRepository.GetClass(classId);
+            return await this.classRepository.GetClassById(classId);
         }
 
-        private void CheckClassRequestInfo(Class classRequest)
+        private static void CheckClassRequestInfo(Class classRequest)
         {
+            if(classRequest.ClassName == null)
+            {
+                throw new ArgumentException("A Class Name is required to create classes");
+            }
+
             if(classRequest.Start_Date > classRequest.End_Date)
             {
                 throw new ArgumentException("Start_Date cannot occur before End_Date");
             }
+
+            //ToDo: Add limit to how far into future classes can run?
+        }
+
+        private async Task CheckIfClassAlreadyExists(Class newClass)
+        {
+            var classWithSameName = await this.classRepository.GetClassByName(newClass.ClassName);
+            var classWithSameId = await this.classRepository.GetClassById(newClass.Id);
+
+            if(classWithSameName != null || classWithSameId != null)
+            {
+                throw new ArgumentException("Class already exists - Please review the details that you provided.");
+            } 
         }
     }
 }

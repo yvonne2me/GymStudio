@@ -20,9 +20,14 @@ namespace GymStudioApi.Repositories
             this.logger = logger;
         }
 
-        public async Task<Class> GetClass(Guid classId)
+        public async Task<Class> GetClassById(Guid classId)
         {
             return await _context.Classes.Where(c => c.Id.Equals(classId)).FirstOrDefaultAsync();
+        }
+
+        public async Task<Class> GetClassByName(string className)
+        {
+            return await _context.Classes.Where(c => c.ClassName.Equals(className)).FirstOrDefaultAsync();
         }
 
         public async Task<Class> SaveClass(Class newClass)
@@ -56,6 +61,7 @@ namespace GymStudioApi.Repositories
                 ClassSession classSession = new ClassSession
                 {
                     Id = Guid.NewGuid(),
+                    ClassId = newClass.Id,
                     ClassName = newClass.ClassName,
                     ClassDate = newClass.Start_Date.AddDays(i),
                     Capacity = newClass.Capacity
