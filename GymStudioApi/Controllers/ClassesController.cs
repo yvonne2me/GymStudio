@@ -11,13 +11,13 @@ namespace GymStudioApi.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ClassController : ControllerBase
+    public class ClassesController : ControllerBase
     {
         IFileLogger logger;
         IClassService classService;
         IMapper mapper;
 
-        public ClassController(IFileLogger logger, IClassService classService, IMapper mapper)
+        public ClassesController(IFileLogger logger, IClassService classService, IMapper mapper)
         {
             this.logger = logger;
             this.classService = classService;
@@ -30,7 +30,7 @@ namespace GymStudioApi.Controllers
         {
             if(classRequest == null)
             {
-                logger.LogInfo("Class info null - Returning Bad Request");
+                logger.LogInfo("Class Request info null - Returning Bad Request");
                 return BadRequest("No Class information provided");
             }
 
@@ -56,11 +56,14 @@ namespace GymStudioApi.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> Get(Guid classId)
         {
-            //Validate classId
-            //Call ClassService
-            //return Class
+            var response = await classService.GetClass(classId);
 
-            return Ok(new Class(){Id = classId, ClassName = "New Class Name"});
+            if(response == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(response);
         }
     }
 }

@@ -15,20 +15,23 @@ namespace GymStudioApi.Services
             this.classRepository = classRepository;
         }
 
-        //TODO: Fix naming of classRequest var -  confusing
-        public async Task<Class> CreateClass(Class classRequest)
+        public async Task<Class> CreateClass(Class newClass)
         {
-            CheckClassRequestInfo(classRequest);
+            CheckClassRequestInfo(newClass);
 
-            classRequest.Id = Guid.NewGuid();
+            newClass.Id = Guid.NewGuid();
 
-            return await this.classRepository.SaveClass(classRequest); 
-
+            return await this.classRepository.SaveClass(newClass);
         }
 
         public bool DeleteClass(Guid classId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<Class> GetClass(Guid classId)
+        {
+            return await this.classRepository.GetClass(classId);
         }
 
         private void CheckClassRequestInfo(Class classRequest)

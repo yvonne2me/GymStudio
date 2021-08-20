@@ -9,6 +9,8 @@ namespace GymStudioApi.Models
             : base(options){}  
 
         public DbSet<Class> Classes { get; set; }
+
+        public DbSet<ClassSession> ClassSessions { get; set; }
             
     }
 }

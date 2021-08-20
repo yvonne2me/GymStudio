@@ -31,7 +31,7 @@ namespace GymStudioUnitTests.ServiceTests
             Assert.Equal("Start_Date cannot occur before End_Date", exception.Message);
         }
 
-                [Fact]
+        [Fact]
         public async void ClassService_CreateClass_AssignsClassId()
         {
             Class newClass = new Class()
@@ -43,12 +43,38 @@ namespace GymStudioUnitTests.ServiceTests
             };
 
             Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
-            mockClassRepository.Setup(r => r.SaveClass(It.IsAny<Class>())).Returns(newClass);
+            mockClassRepository.Setup(r => r.SaveClass(It.IsAny<Class>())).ReturnsAsync(newClass);
             var sut = new ClassService(mockClassRepository.Object);
 
             var classResponse = await sut.CreateClass(newClass);
 
-            Assert.NotNull(classResponse.Id);
+            Assert.NotEqual(Guid.Empty, classResponse.Id);
+        }
+
+        [Fact]
+        public async void ClassService_GetClass_ReturnsClass()
+        {
+            //Assign
+            Guid classId = Guid.NewGuid();
+
+            Class newClass = new Class()
+            {
+                Id = classId,
+                ClassName = "TestClassName",
+                Start_Date = DateTime.Now,
+                End_Date = DateTime.Now.AddDays(1),
+                Capacity = 10
+            };
+
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            mockClassRepository.Setup(r => r.GetClass(It.IsAny<Guid>())).ReturnsAsync(newClass);
+            var sut = new ClassService(mockClassRepository.Object);
+
+            //Act
+            var classResponse = await sut.GetClass(classId);
+
+            //Assert
+            Assert.Equal(newClass.Id, classResponse.Id);
         }
     }
 }

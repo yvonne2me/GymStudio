@@ -9,10 +9,10 @@ namespace GymStudioApi.Models.API
         public string ClassName { get; set; }
 
         [Required]
-        public DateTime Start_Date { get; set; }
+        public DateTime? Start_Date { get; set; }
 
         [Required]
-        public DateTime End_Date { get; set; }
+        public DateTime? End_Date { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]

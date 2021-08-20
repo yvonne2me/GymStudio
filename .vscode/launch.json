@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/GymStudioApi/bin/Debug/net5.0/GymStudio.dll",
+            "program": "${workspaceFolder}/GymStudioApi/bin/Debug/net5.0/GymStudioApi.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
