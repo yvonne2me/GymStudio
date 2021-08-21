@@ -9,6 +9,7 @@ namespace GymStudioApi.Mappers
         public MappingProfile()
         {
             CreateMap<ClassRequest, Class>();
+            CreateMap<BookingRequest, Booking>();
         }
     }
 }
