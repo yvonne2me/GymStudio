@@ -11,6 +11,8 @@ namespace GymStudioApi.Models
         public DbSet<Class> Classes { get; set; }
 
         public DbSet<ClassSession> ClassSessions { get; set; }
+
+        public DbSet<Booking> Bookings { get; set; }
             
     }
 }

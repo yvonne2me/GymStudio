@@ -48,6 +48,7 @@ namespace GymStudio
 
             //Repositories
             services.AddScoped<IClassRepository, ClassRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
 
             //Logging
             services.AddTransient<IFileLogger, FileLogger>();

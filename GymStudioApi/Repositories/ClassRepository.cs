@@ -47,9 +47,14 @@ namespace GymStudioApi.Repositories
             }
         }
 
-        public async Task<List<ClassSession>> GetClassSessions(Guid classId)
+        public async Task<List<ClassSession>> GetAllClassSessions(Guid classId)
         {
             return await _context.ClassSessions.Where(c => c.ClassId.Equals(classId)).ToListAsync();
+        }
+
+        public async Task<ClassSession> GetClassSessionsByDate(Guid classId, DateTime date)
+        {
+            return await _context.ClassSessions.Where(c => c.ClassId.Equals(classId) && c.ClassDate.Equals(date)).FirstOrDefaultAsync();
         }
 
         private void CreateClassSessions(Class newClass)

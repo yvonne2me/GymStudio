@@ -29,7 +29,7 @@ namespace GymStudioUnitTests.ControllerTests
             BookingRequest bookingRequest = null;
 
             //Act
-            var response = await bookingsController.Post(bookingRequest);
+            var response = await this.bookingsController.Post(bookingRequest);
             var badResponse = response as BadRequestObjectResult;
 
             //Assert
@@ -45,7 +45,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await bookingsController.Post(bookingRequest);
+            var response = await this.bookingsController.Post(bookingRequest);
             var okResponse = response as OkObjectResult;
 
             //Assert
@@ -53,7 +53,7 @@ namespace GymStudioUnitTests.ControllerTests
         }
 
         [Fact]
-        public async void BookingsController_Post_ExceptionThrown_Returns_BadRequest()
+        public async void BookingsController_Post_ExceptionThrown_Returns_Error()
         {
             //Assign
             SetupTestInfo();
@@ -61,11 +61,11 @@ namespace GymStudioUnitTests.ControllerTests
             this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await bookingsController.Post(bookingRequest);
-            var badResponse = response as BadRequestObjectResult;
+            Func<Task> act = () => this.bookingsController.Post(bookingRequest);
 
             //Assert
-            Assert.Equal(400, badResponse.StatusCode);
+            var exception = await Assert.ThrowsAsync<Exception>(act);
+            Assert.Equal("Error occurred while saving Booking", exception.Message);
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await bookingsController.Get(Guid.NewGuid());
+            var response = await this.bookingsController.Get(Guid.NewGuid());
             
             //Assert
             var notFoundResponse = Assert.IsType<NotFoundResult>(response);
@@ -94,7 +94,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await bookingsController.Get(Guid.NewGuid());
+            var response = await this.bookingsController.Get(Guid.NewGuid());
             var okResponse = response as OkObjectResult;
 
             //Assert

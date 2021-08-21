@@ -30,7 +30,7 @@ namespace GymStudioUnitTests.ControllerTests
             ClassRequest classRequest = null;
 
             //Act
-            var response = await classesController.Post(classRequest);
+            var response = await this.classesController.Post(classRequest);
             var badResponse = response as BadRequestObjectResult;
 
             //Assert
@@ -46,7 +46,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await classesController.Post(classRequest);
+            var response = await this.classesController.Post(classRequest);
             var okResponse = response as OkObjectResult;
 
             //Assert
@@ -54,7 +54,7 @@ namespace GymStudioUnitTests.ControllerTests
         }
 
         [Fact]
-        public async void ClassController_Post_ExceptionThrown_Returns_BadRequest()
+        public async void ClassesController_Post_ExceptionThrown_Returns_Error()
         {
             //Assign
             SetupTestInfo();
@@ -62,11 +62,11 @@ namespace GymStudioUnitTests.ControllerTests
             this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await classesController.Post(classRequest);
-            var badResponse = response as BadRequestObjectResult;
+            Func<Task> act = () => this.classesController.Post(classRequest);
 
             //Assert
-            Assert.Equal(400, badResponse.StatusCode);
+            var exception = await Assert.ThrowsAsync<Exception>(act);
+            Assert.Equal("Error occurred while saving Class", exception.Message);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await classesController.Get(Guid.NewGuid());
+            var response = await this.classesController.Get(Guid.NewGuid());
             
             //Assert
             var notFoundResponse = Assert.IsType<NotFoundResult>(response);
@@ -95,7 +95,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await classesController.Get(Guid.NewGuid());
+            var response = await this.classesController.Get(Guid.NewGuid());
             var okResponse = response as OkObjectResult;
 
             //Assert
