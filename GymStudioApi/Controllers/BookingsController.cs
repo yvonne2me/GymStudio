@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using AutoMapper;
+using GymStudioApi.Exceptions;
 using GymStudioApi.Logging;
 using GymStudioApi.Models.API;
 using GymStudioApi.Models.Domain;
@@ -43,6 +44,10 @@ namespace GymStudioApi.Controllers
             {
                 response = await bookingService.CreateBooking(createBookingRequest);
             }
+            catch(ClassNotFoundException classNotFoundException)
+            {
+                return NotFound(classNotFoundException.Message);
+            }
             catch(ArgumentException argumentException)
             {
                 return BadRequest(argumentException.Message);
@@ -59,9 +64,9 @@ namespace GymStudioApi.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> Get(Guid bookingId)
+        public async Task<IActionResult> Get(Guid classId)
         {
-            var response = await bookingService.GetBooking(bookingId);
+            var response = await bookingService.GetBookings(classId);
 
             if(response == null)
             {

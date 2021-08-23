@@ -1,0 +1,987 @@
+{
+	"info": {
+		"_postman_id": "bf8cb0d4-4020-4428-bbfe-e20927e0311c",
+		"name": "Gym Studio Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Classes",
+			"item": [
+				{
+					"name": "Class - OK - 200",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Status: 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{start_date}}\",\n  \"end_date\": \"{{end_date}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/classes",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - ClassName Not Provided - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - ClassName Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Class Name Not Provided - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.ClassName[0]).to.equal(\"The ClassName field is required.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"start_date\": \"{{start_date}}\",\n  \"end_date\": \"{{end_date}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/classes",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - Start_Date Not Provided - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Start_Date Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Start_Date Not Provided - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.Start_Date[0]).to.equal(\"The Start_Date field is required.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"end_date\": \"{{end_date}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "https://localhost:5001/classes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - Start Date Greater Than End Date - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Start_Date cannot occur before End_Date - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Start_Date cannot occur before End_Date - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage).to.equal(\"Start_Date cannot occur before End_Date\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require ('moment');",
+									"",
+									"pm.collectionVariables.set(\"startDateInFuture\", moment().add(10, 'day').toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{startDateInFuture}}\",\n  \"end_date\": \"{{end_date}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/classes",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - End_Date Not Provided - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - End_Date Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - End_Date Not Provided - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.End_Date[0]).to.equal(\"The End_Date field is required.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{start_date}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "https://localhost:5001/classes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - Capacity Not Provided - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Capacity Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Capacity Not Provided - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.Capacity[0]).to.equal(\"The field Capacity must be greater than 1.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{start_date}}\",\n  \"end_date\": \"{{end_date}}\"\n}"
+						},
+						"url": {
+							"raw": "https://localhost:5001/classes",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - Request Body Not Provided - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Request Body Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/classes",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - GET - Returns 200",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"GET Class - Status: 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage['id']).to.equal(pm.collectionVariables.get('classId'));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Define a new class",
+									"var newClass =  {",
+									"    \"className\": pm.collectionVariables.get('random_class_name'),",
+									"    \"start_date\": pm.collectionVariables.get('start_date'),",
+									"    \"end_date\": pm.collectionVariables.get('end_date'),",
+									"    \"capacity\": 3",
+									"}",
+									"",
+									"const body = {",
+									"    mode: \"raw\",",
+									"    raw: newClass,",
+									"}",
+									"",
+									"var options = { method: 'POST',",
+									"  url: pm.collectionVariables.get('Base_URL') + \"/classes\",",
+									"  header: {\"Content-Type\": \"application/json\"},",
+									"  body: body",
+									"};",
+									"",
+									"pm.sendRequest(options, function (error, response) {",
+									"    if (error) throw new Error(error);",
+									"    var jsonData = response.json();",
+									"    pm.collectionVariables.set('classId', jsonData.id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/classes?classId={{classId}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							],
+							"query": [
+								{
+									"key": "classId",
+									"value": "{{classId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - GET - Returns 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"GET Class - Class Does Not Exist - Status: 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Define a new class",
+									"var newClass =  {",
+									"    \"className\": pm.collectionVariables.get('random_class_name'),",
+									"    \"start_date\": pm.collectionVariables.get('start_date'),",
+									"    \"end_date\": pm.collectionVariables.get('end_date'),",
+									"    \"capacity\": 3",
+									"}",
+									"",
+									"const body = {",
+									"    mode: \"raw\",",
+									"    raw: newClass,",
+									"}",
+									"",
+									"var options = { method: 'POST',",
+									"  url: pm.collectionVariables.get('Base_URL') + \"/classes\",",
+									"  header: {\"Content-Type\": \"application/json\"},",
+									"  body: body",
+									"};",
+									"",
+									"pm.sendRequest(options, function (error, response) {",
+									"    if (error) throw new Error(error);",
+									"    pm.collectionVariables.set('class_Id_Does_Not_Exist', pm.variables.replaceIn('{{$guid}}'));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/classes?classId={{class_Id_Does_Not_Exist}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							],
+							"query": [
+								{
+									"key": "classId",
+									"value": "{{class_Id_Does_Not_Exist}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Bookings - OK - 200",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Bookings - Status: 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"classId\": \"{{bookingClassId}}\",\n  \"name\": \"membername\",\n  \"date\": \"2021-08-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/bookings",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bookings - Member Name Not Provided - 400",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Bookings - Member Name Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Member Name Not Provided - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.Name[0]).to.equal(\"The Name field is required.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"classId\": \"{{bookingClassId}}\",\n  \"date\": \"2021-08-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/bookings",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bookings - Date Not Provided - 400",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Bookings - Date Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Date Not Provided - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.Date[0]).to.equal(\"The Date field is required.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"classId\": \"{{bookingClassId}}\",\n  \"name\": \"membername\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/bookings",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bookings - No Class Session available - 400",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Bookings - No Class Session available - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Bookings - No Class Session available - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage).to.equal(\"No Class Session available for this Date.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"classId\": \"{{bookingClassId}}\",\n  \"name\": \"membername\",\n  \"date\": \"2021-08-20\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/bookings",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bookings - Class Does Not Exist - 404",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"random_guid\", pm.variables.replaceIn('{{$guid}}'));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Bookings - Class Does Not Exist - Status: 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"POST Bookings - Class Does Not Exist - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage).to.equal(\"Class does not exist - Please review the information provided\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"classId\": \"{{random_guid}}\",\n  \"name\": \"membername\",\n  \"date\": \"2021-08-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/bookings",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bookings - ClassId Not Provided",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Bookings - ClassId Not Provided - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Bookings - ClassId Not Provided - Error Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage.errors.ClassId[0]).to.equal(\"The ClassId field is required.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"membername\",\n  \"date\": \"2021-08-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/bookings",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bookings - GET - Returns 200",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"GET Booking - Status: 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"",
+									"    var responseMessage = pm.response.json();",
+									"",
+									"",
+									"    pm.test('GET Bookings - Correct Class Id', () => {",
+									"        _.each(responseMessage, (item) => {",
+									"            pm.expect(item.classId).to.equal(pm.collectionVariables.get('bookingClassId'))",
+									"        })",
+									"    })",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require ('moment');",
+									"",
+									"//Create 3 bookings for existing class so that we can retrieve the expected bookings",
+									"for(var i = 0; i < 3; i++)",
+									"{",
+									"    var newBooking =  {",
+									"        \"classId\": pm.collectionVariables.get('bookingClassId'),",
+									"        \"name\": pm.variables.replaceIn('{{$randomFirstName}}'),",
+									"        \"date\": moment().toISOString()",
+									"    }",
+									"",
+									"    const body = {",
+									"        mode: \"raw\",",
+									"        raw: newBooking,",
+									"    }",
+									"",
+									"    var options = { method: 'POST',",
+									"    url: pm.collectionVariables.get('Base_URL') + \"/bookings\",",
+									"    header: {\"Content-Type\": \"application/json\"},",
+									"    body: body",
+									"    };",
+									"",
+									"    pm.sendRequest(options, function (error, response) {",
+									"        if (error) throw new Error(error);",
+									"    });",
+									"",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/bookings?classId={{bookingClassId}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"bookings"
+							],
+							"query": [
+								{
+									"key": "classId",
+									"value": "{{bookingClassId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"//For the Bookings Collection, creating a Class for use",
+							"",
+							"var newClass =  {",
+							"    \"className\": pm.collectionVariables.get('random_class_name'),",
+							"    \"start_date\": pm.collectionVariables.get('start_date'),",
+							"    \"end_date\": pm.collectionVariables.get('end_date'),",
+							"    \"capacity\": 3",
+							"}",
+							"",
+							"const body = {",
+							"    mode: \"raw\",",
+							"    raw: newClass,",
+							"}",
+							"",
+							"var options = { method: 'POST',",
+							"  url: pm.collectionVariables.get('Base_URL') + \"/classes\",",
+							"  header: {\"Content-Type\": \"application/json\"},",
+							"  body: body",
+							"};",
+							"",
+							"pm.sendRequest(options, function (error, response) {",
+							"    if (error) throw new Error(error);",
+							"    var jsonData = response.json();",
+							"    pm.collectionVariables.set('bookingClassId', jsonData.id);",
+							"});"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var moment = require ('moment');",
+					"",
+					"pm.collectionVariables.set(\"random_class_name\", pm.variables.replaceIn('{{$guid}}'));",
+					"pm.collectionVariables.set(\"start_date\", moment().toISOString());",
+					"pm.collectionVariables.set(\"end_date\", moment().add(2, 'day').toISOString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "random_class_name",
+			"value": ""
+		},
+		{
+			"key": "start_date",
+			"value": ""
+		},
+		{
+			"key": "end_date",
+			"value": ""
+		},
+		{
+			"key": "classId",
+			"value": ""
+		},
+		{
+			"key": "bookingClassId",
+			"value": ""
+		},
+		{
+			"key": "random_guid",
+			"value": ""
+		},
+		{
+			"key": "Base_URL",
+			"value": "https://localhost:5001"
+		},
+		{
+			"key": "startDateInFuture",
+			"value": ""
+		},
+		{
+			"key": "class_Id_Does_Not_Exist",
+			"value": ""
+		}
+	]
+}

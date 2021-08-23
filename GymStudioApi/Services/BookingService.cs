@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using GymStudioApi.Exceptions;
 using GymStudioApi.Models.Domain;
 using GymStudioApi.Repositories;
 
@@ -21,7 +23,7 @@ namespace GymStudioApi.Services
             var existingClass = await classService.GetClass(newBooking.ClassId);
             if(existingClass == null)
             {
-                throw new ArgumentException("Class does not exist - Please review the information provided");
+                throw new ClassNotFoundException("Class does not exist - Please review the information provided");
             }
 
             var availableClassSessions = await classService.GetClassSessionsByDate(newBooking.ClassId, newBooking.Date);
@@ -36,9 +38,9 @@ namespace GymStudioApi.Services
             return await bookingRepository.SaveBooking(newBooking);
         }
 
-        public Task<Booking> GetBooking(Guid bookingId)
+        public async Task<List<Booking>> GetBookings(Guid classId)
         {
-            throw new NotImplementedException();
+            return await this.bookingRepository.GetBookings(classId);
         }
     }
 }

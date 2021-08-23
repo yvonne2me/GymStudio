@@ -6,7 +6,7 @@ namespace GymStudioApi.Models.API
     public class BookingRequest
     {
         [Required]
-        public Guid ClassId { get; set; }
+        public Guid? ClassId { get; set; }
 
         [Required]
         public string Name { get; set; }

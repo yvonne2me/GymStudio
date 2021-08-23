@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GymStudioApi.Logging;
 using GymStudioApi.Models;
 using GymStudioApi.Models.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace GymStudioApi.Repositories
 {
@@ -30,6 +33,11 @@ namespace GymStudioApi.Repositories
                 logger.LogError("BookingRepository - SaveBooking - Unable to Save Booking");
                 throw new Exception("Error saving new Booking");
             }
+        }
+
+        public async Task<List<Booking>> GetBookings(Guid classId)
+        {
+            return await _context.Bookings.Where(b => b.ClassId.Equals(classId)).ToListAsync();
         }
     }
 }
