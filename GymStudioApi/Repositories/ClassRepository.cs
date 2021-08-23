@@ -54,7 +54,7 @@ namespace GymStudioApi.Repositories
 
         public async Task<ClassSession> GetClassSessionsByDate(Guid classId, DateTime date)
         {
-            return await _context.ClassSessions.Where(c => c.ClassId.Equals(classId) && c.ClassDate.Equals(date.Date)).FirstOrDefaultAsync();
+            return await _context.ClassSessions.Where(c => c.ClassId.Equals(classId) && c.ClassDate.Date.Equals(date.Date)).FirstOrDefaultAsync();
         }
 
         private void CreateClassSessions(Class newClass)

@@ -33,7 +33,7 @@ Swagger is included with this project.
 
 Once the application is running, this can be accessed at:
 
-    https://localhost:5001/swagger/
+    https://localhost:5001/swagger/index.html
         
 ## Postman Collection ##
 
