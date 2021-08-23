@@ -1,5 +1,6 @@
 using Xunit;
 using Moq;
+using GymStudioApi.Exceptions;
 using GymStudioApi.Models.Domain;
 using GymStudioApi.Repositories;
 using GymStudioApi.Services;
@@ -10,30 +11,26 @@ namespace GymStudioUnitTests.ServiceTests
 {
     public class BookingServiceTests
     {
+
+        Mock<IBookingRepository> mockBookingRepository;
+        Mock<IClassService> mockClassService;
+        Booking newBooking;
+
         [Fact]
         public async void BookingService_ClassDoesNotExist_ThrowsException()
         {
             //Assign
-            Mock<IBookingRepository> mockBookingRepository = new Mock<IBookingRepository>();
-            Mock<IClassService> mockClassService = new Mock<IClassService>();
+            SetupTestInfo();
             Class existingClass = null;
+            this.mockClassService.Setup(c => c.GetClass(It.IsAny<Guid>())).ReturnsAsync(existingClass);            
 
-            mockClassService.Setup(c => c.GetClass(It.IsAny<Guid>())).ReturnsAsync(existingClass);
-            
-            Booking newBooking = new Booking()
-            {
-                ClassId = Guid.NewGuid(),
-                Name = "NameOfBookingMember",
-                Date = DateTime.Now
-            };
-
-            var bookingService = new BookingService(mockClassService.Object, mockBookingRepository.Object);
+            var sut = new BookingService(this.mockClassService.Object, this.mockBookingRepository.Object);
 
             //Act
-            Func<Task> act = () => bookingService.CreateBooking(newBooking);
+            Func<Task> act = () => sut.CreateBooking(this.newBooking);
 
             //Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            var exception = await Assert.ThrowsAsync<ClassNotFoundException>(act);
             Assert.Equal("Class does not exist - Please review the information provided", exception.Message);
         }
 
@@ -41,24 +38,15 @@ namespace GymStudioUnitTests.ServiceTests
         public async void BookingService_ClassSessionNotAvailableOnDate_ThrowsException()
         {
             //Assign
-            Mock<IBookingRepository> mockBookingRepository = new Mock<IBookingRepository>();
-            Mock<IClassService> mockClassService = new Mock<IClassService>();
+            SetupTestInfo();
             ClassSession existingClassSession = null;
+            this.mockClassService.Setup(c => c.GetClass(It.IsAny<Guid>())).ReturnsAsync(new Class());
+            this.mockClassService.Setup(c => c.GetClassSessionsByDate(It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(existingClassSession);
 
-            mockClassService.Setup(c => c.GetClass(It.IsAny<Guid>())).ReturnsAsync(new Class());
-            mockClassService.Setup(c => c.GetClassSessionsByDate(It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(existingClassSession);
-
-            Booking newBooking = new Booking()
-            {
-                ClassId = Guid.NewGuid(),
-                Name = "NameOfBookingMember",
-                Date = DateTime.Now
-            };
-
-            var bookingService = new BookingService(mockClassService.Object, mockBookingRepository.Object);
+            var sut = new BookingService(this.mockClassService.Object, this.mockBookingRepository.Object);
 
             //Act
-            Func<Task> act = () => bookingService.CreateBooking(newBooking);
+            Func<Task> act = () => sut.CreateBooking(this.newBooking);
 
             //Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(act);
@@ -69,27 +57,31 @@ namespace GymStudioUnitTests.ServiceTests
         public async void BookingService_CreateBooking_ReturnsBooking()
         {
             //Assign
-            Mock<IBookingRepository> mockBookingRepository = new Mock<IBookingRepository>();
-            Mock<IClassService> mockClassService = new Mock<IClassService>();
+            SetupTestInfo();
+            this.mockClassService.Setup(c => c.GetClass(It.IsAny<Guid>())).ReturnsAsync(new Class());
+            this.mockClassService.Setup(c => c.GetClassSessionsByDate(It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(new ClassSession());            
+            this.mockBookingRepository.Setup(r => r.SaveBooking(It.IsAny<Booking>())).ReturnsAsync(this.newBooking);
 
-            mockClassService.Setup(c => c.GetClass(It.IsAny<Guid>())).ReturnsAsync(new Class());
-            mockClassService.Setup(c => c.GetClassSessionsByDate(It.IsAny<Guid>(), It.IsAny<DateTime>())).ReturnsAsync(new ClassSession());
-            
-            Booking newBooking = new Booking()
+            var sut = new BookingService(this.mockClassService.Object, this.mockBookingRepository.Object);
+
+            //Act
+            var response = await sut.CreateBooking(this.newBooking);
+
+            //Assert
+            Assert.NotNull(response);
+            Assert.NotEqual(Guid.Empty, response.Id);
+        }
+
+        private void SetupTestInfo()
+        {
+            this.mockBookingRepository = new Mock<IBookingRepository>();
+            this.mockClassService = new Mock<IClassService>();
+            this.newBooking = new Booking()
             {
                 ClassId = Guid.NewGuid(),
                 Name = "NameOfBookingMember",
                 Date = DateTime.Now
             };
-
-            mockBookingRepository.Setup(r => r.SaveBooking(It.IsAny<Booking>())).ReturnsAsync(newBooking);
-
-            var bookingService = new BookingService(mockClassService.Object, mockBookingRepository.Object);
-
-            var bookingResponse = await bookingService.CreateBooking(newBooking);
-
-            Assert.NotNull(bookingResponse);
-            Assert.NotEqual(Guid.Empty, bookingResponse.Id);
-        } 
+        }
     }
 }

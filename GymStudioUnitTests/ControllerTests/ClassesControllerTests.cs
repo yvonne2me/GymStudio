@@ -18,7 +18,6 @@ namespace GymStudioUnitTests.ControllerTests
         Mock<IFileLogger> mockLogger;
         Mock<IClassService> mockClassService;
         Mock<IMapper> mockMapper;
-        ClassesController classesController;
         ClassRequest classRequest;
 
         [Fact]
@@ -26,11 +25,11 @@ namespace GymStudioUnitTests.ControllerTests
         {
             //Assign
             SetupTestInfo();
-            this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
+            var sut = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
             ClassRequest classRequest = null;
 
             //Act
-            var response = await this.classesController.Post(classRequest);
+            var response = await sut.Post(classRequest);
             var badResponse = response as BadRequestObjectResult;
 
             //Assert
@@ -43,10 +42,10 @@ namespace GymStudioUnitTests.ControllerTests
         {
             //Assign
             SetupTestInfo();
-            this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
+            var sut = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await this.classesController.Post(classRequest);
+            var response = await sut.Post(classRequest);
             var okResponse = response as OkObjectResult;
 
             //Assert
@@ -59,10 +58,10 @@ namespace GymStudioUnitTests.ControllerTests
             //Assign
             SetupTestInfo();
             this.mockClassService.Setup(s => s.CreateClass(It.IsAny<Class>())).Throws(new Exception());
-            this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
+            var sut = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            Func<Task> act = () => this.classesController.Post(classRequest);
+            Func<Task> act = () => sut.Post(classRequest);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(act);
@@ -76,10 +75,10 @@ namespace GymStudioUnitTests.ControllerTests
             SetupTestInfo();
             Class newClass = null;
             this.mockClassService.Setup(s => s.GetClass(It.IsAny<Guid>())).ReturnsAsync(newClass);
-            this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
+            var sut = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await this.classesController.Get(Guid.NewGuid());
+            var response = await sut.Get(Guid.NewGuid());
             
             //Assert
             var notFoundResponse = Assert.IsType<NotFoundResult>(response);
@@ -92,10 +91,10 @@ namespace GymStudioUnitTests.ControllerTests
             //Assign
             SetupTestInfo();
             this.mockClassService.Setup(s => s.GetClass(It.IsAny<Guid>())).ReturnsAsync(new Class());
-            this.classesController = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
+            var sut = new ClassesController(mockLogger.Object, mockClassService.Object, mockMapper.Object);
 
             //Act
-            var response = await this.classesController.Get(Guid.NewGuid());
+            var response = await sut.Get(Guid.NewGuid());
             var okResponse = response as OkObjectResult;
 
             //Assert

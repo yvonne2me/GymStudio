@@ -40,38 +40,6 @@ namespace GymStudioUnitTests.RepositoryTests
             Assert.Equal(saveNewClass.Id, response.Id);
         }
 
-        // [Fact]
-        // public async void ClassRepository_ClassNotSaved_ThrowsException()
-        // {
-        //     //Assign
-        //     SetupTestInfo();
-
-        //     DbContextOptions<GymStudioContext> options = new DbContextOptions<GymStudioContext>();
-        //     Mock<GymStudioContext> mockGymStudioContext = new Mock<GymStudioContext>();
-        //     Mock<DbSet<Class>> mockDbSet = new Mock<DbSet<Class>>();
-
-        //     mockGymStudioContext.Setup(x => x.Classes.Add(It.IsAny<Class>())).Returns(It.IsAny<EntityEntry<Class>>());
-        //     mockGymStudioContext.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);
-            
-        //     var sut = new ClassRepository(mockLogger.Object, mockGymStudioContext.Object);
-
-        //     Class saveNewClass = new Class()
-        //     {
-        //         Id = Guid.NewGuid(),
-        //         ClassName = "SaveNewClass",
-        //         Start_Date = DateTime.Now.AddDays(1),
-        //         End_Date = DateTime.Now,
-        //         Capacity = 2
-        //     };
-
-        //     //Act           
-        //     Func<Task> response = () => sut.SaveClass(saveNewClass);
-
-        //     //Assert
-        //     var exception = await Assert.ThrowsAsync<Exception>(response);
-        //     Assert.Equal("Error saving new Class", exception.Message);            
-        // }
-
         [Fact]
         public async void ClassRepository_SaveClass_CreatesClassSessions()
         {

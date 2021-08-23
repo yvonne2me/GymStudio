@@ -38,6 +38,36 @@ namespace GymStudioUnitTests.RepositoryTests
             Assert.Equal(saveNewBooking.Id, response.Id);
         }
 
+        [Fact]
+        public async void BookingRepository_GetBookings_ReturnsBookings()
+        {
+            //Assign
+            SetupTestInfo();
+            var sut = new BookingRepository(mockLogger.Object, _context);
+
+            var classId = Guid.NewGuid();
+
+            for(var i = 0; i < 2; i++)
+            {
+                Booking saveNewBooking = new Booking()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassId = classId,
+                    Name = "SaveNewBooking" + i,
+                    Date = DateTime.Now,
+                };
+
+                await sut.SaveBooking(saveNewBooking);
+            }
+
+            //Act
+            var response = await sut.GetBookings(classId);
+
+            //Assert
+            Assert.NotEmpty(response);
+            Assert.Equal(2, response.Count);
+        }
+
         private void SetupTestInfo()
         {
             mockLogger = new Mock<IFileLogger>();

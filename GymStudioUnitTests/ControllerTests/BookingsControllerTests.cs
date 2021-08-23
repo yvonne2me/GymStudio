@@ -7,6 +7,7 @@ using GymStudioApi.Services;
 using GymStudioApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 
@@ -17,7 +18,6 @@ namespace GymStudioUnitTests.ControllerTests
         Mock<IFileLogger> mockLogger;
         Mock<IBookingService> mockBookingService;
         Mock<IMapper> mockMapper;
-        BookingsController bookingsController;
         BookingRequest bookingRequest;
 
         [Fact]
@@ -25,11 +25,11 @@ namespace GymStudioUnitTests.ControllerTests
         {
             //Assign
             SetupTestInfo();
-            this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
+            var sut = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
             BookingRequest bookingRequest = null;
 
             //Act
-            var response = await this.bookingsController.Post(bookingRequest);
+            var response = await sut.Post(bookingRequest);
             var badResponse = response as BadRequestObjectResult;
 
             //Assert
@@ -42,10 +42,10 @@ namespace GymStudioUnitTests.ControllerTests
         {
             //Assign
             SetupTestInfo();
-            this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
+            var sut = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await this.bookingsController.Post(bookingRequest);
+            var response = await sut.Post(bookingRequest);
             var okResponse = response as OkObjectResult;
 
             //Assert
@@ -58,10 +58,10 @@ namespace GymStudioUnitTests.ControllerTests
             //Assign
             SetupTestInfo();
             this.mockBookingService.Setup(s => s.CreateBooking(It.IsAny<Booking>())).Throws(new Exception());
-            this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
+            var sut= new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            Func<Task> act = () => this.bookingsController.Post(bookingRequest);
+            Func<Task> act = () => sut.Post(bookingRequest);
 
             //Assert
             var exception = await Assert.ThrowsAsync<Exception>(act);
@@ -73,12 +73,12 @@ namespace GymStudioUnitTests.ControllerTests
         {
             //Assign
             SetupTestInfo();
-            Booking newBooking = null;
-            this.mockBookingService.Setup(s => s.GetBooking(It.IsAny<Guid>())).ReturnsAsync(newBooking);
-            this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
+            List<Booking> newBooking = null;
+            this.mockBookingService.Setup(s => s.GetBookings(It.IsAny<Guid>())).ReturnsAsync(newBooking);
+            var sut = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await this.bookingsController.Get(Guid.NewGuid());
+            var response = await sut.Get(Guid.NewGuid());
             
             //Assert
             var notFoundResponse = Assert.IsType<NotFoundResult>(response);
@@ -90,11 +90,15 @@ namespace GymStudioUnitTests.ControllerTests
         {
             //Assign
             SetupTestInfo();
-            this.mockBookingService.Setup(s => s.GetBooking(It.IsAny<Guid>())).ReturnsAsync(new Booking());
-            this.bookingsController = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
+
+            List<Booking> listOfBookings = new List<Booking>();
+            listOfBookings.Add(new Booking());
+
+            this.mockBookingService.Setup(s => s.GetBookings(It.IsAny<Guid>())).ReturnsAsync(listOfBookings);
+            var sut = new BookingsController(mockLogger.Object, mockBookingService.Object, mockMapper.Object);
 
             //Act
-            var response = await this.bookingsController.Get(Guid.NewGuid());
+            var response = await sut.Get(Guid.NewGuid());
             var okResponse = response as OkObjectResult;
 
             //Assert

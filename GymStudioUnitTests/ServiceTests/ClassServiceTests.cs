@@ -61,6 +61,7 @@ namespace GymStudioUnitTests.ServiceTests
         [Fact]
         public async void ClassService_CreateClass_AssignsClassId()
         {
+            //Assign
             Class newClass = new Class()
             {
                 ClassName = "TestClassName",
@@ -73,8 +74,10 @@ namespace GymStudioUnitTests.ServiceTests
             mockClassRepository.Setup(r => r.SaveClass(It.IsAny<Class>())).ReturnsAsync(newClass);
             var sut = new ClassService(mockClassRepository.Object);
 
+            //Act
             var classResponse = await sut.CreateClass(newClass);
 
+            //Assert
             Assert.NotEqual(Guid.Empty, classResponse.Id);
         }
 
@@ -156,7 +159,7 @@ namespace GymStudioUnitTests.ServiceTests
             Assert.Equal("Class already exists - Please review the details that you provided.", exception.Message);
         }
 
-                [Fact]
+        [Fact]
         public async void ClassService_CreateClass_BothClassIdAndNameAlreadyExist_ThrowsException()
         {
             //Assign
@@ -180,7 +183,6 @@ namespace GymStudioUnitTests.ServiceTests
             //Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(act);
             Assert.Equal("Class already exists - Please review the details that you provided.", exception.Message);
-        }
-        
+        }        
     }
 }
