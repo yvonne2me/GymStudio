@@ -46,11 +46,9 @@ namespace GymStudioApi.Controllers
             {
                 return BadRequest(argumentException.Message);
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                //Log all other exceptions
-                //Return a 500?
-                return BadRequest(ex.Message);
+                throw new Exception("Error occurred while saving Class");
             }
 
             return Ok(response);

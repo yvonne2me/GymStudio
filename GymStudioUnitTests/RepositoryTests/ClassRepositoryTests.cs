@@ -91,7 +91,7 @@ namespace GymStudioUnitTests.RepositoryTests
 
             //Act
             await sut.SaveClass(saveNewClass);
-            var classSessionResponse = await sut.GetClassSessions(saveNewClass.Id);
+            var classSessionResponse = await sut.GetAllClassSessions(saveNewClass.Id);
 
             //Assert
             Assert.Equal(numberOfClassSessions, classSessionResponse.Count);
@@ -116,7 +116,7 @@ namespace GymStudioUnitTests.RepositoryTests
 
             //Act
             await sut.SaveClass(saveNewClass);
-            var classSessionResponse = await sut.GetClassSessions(saveNewClass.Id);
+            var classSessionResponse = await sut.GetAllClassSessions(saveNewClass.Id);
 
             //Assert
             foreach(var classSession in classSessionResponse)
@@ -130,24 +130,7 @@ namespace GymStudioUnitTests.RepositoryTests
             var builder = new DbContextOptionsBuilder<GymStudioContext>()
                     .UseInMemoryDatabase("GymStudioContext");
 
-            var context = new GymStudioContext(builder.Options);
-
-            for (var i = 0; i < 5; i++)
-            {
-                Class newClass = new Class()
-                {
-                    Id = Guid.NewGuid(),
-                    ClassName = "TestClassName" + i,
-                    Start_Date = DateTime.Now,
-                    End_Date = DateTime.Now.AddDays(1),
-                    Capacity = 10
-                };
-
-                context.Classes.Add(newClass);
-            }
-
-            context.SaveChanges();
-            _context = context;
+            _context = new GymStudioContext(builder.Options);
         }
     }
 }

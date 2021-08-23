@@ -44,9 +44,11 @@ namespace GymStudio
 
             //Services
             services.AddScoped<IClassService, ClassService>();
+            services.AddScoped<IBookingService, BookingService>();
 
             //Repositories
             services.AddScoped<IClassRepository, ClassRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
 
             //Logging
             services.AddTransient<IFileLogger, FileLogger>();

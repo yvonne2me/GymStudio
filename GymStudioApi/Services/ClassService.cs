@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GymStudioApi.Models.API;
 using GymStudioApi.Models.Domain;
@@ -24,6 +25,16 @@ namespace GymStudioApi.Services
             await CheckIfClassAlreadyExists(newClass);
 
             return await this.classRepository.SaveClass(newClass);
+        }
+
+        public async Task<List<ClassSession>> GetAllClassSessions(Guid classId)
+        {
+            return await this.classRepository.GetAllClassSessions(classId);
+        }
+
+        public async Task<ClassSession> GetClassSessionsByDate(Guid classId, DateTime date)
+        {
+            return await this.classRepository.GetClassSessionsByDate(classId, date);
         }
 
         public bool DeleteClass(Guid classId)

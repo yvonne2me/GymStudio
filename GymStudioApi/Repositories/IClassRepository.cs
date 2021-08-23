@@ -10,7 +10,8 @@ namespace GymStudioApi.Repositories
         Task<Class> SaveClass(Class newClass);
         Task<Class> GetClassById(Guid classId);
         Task<Class> GetClassByName(string className);
-        Task<List<ClassSession>> GetClassSessions(Guid classId);
+        Task<List<ClassSession>> GetAllClassSessions(Guid classId);
+        Task<ClassSession> GetClassSessionsByDate(Guid classId, DateTime date);
 
         
     }
