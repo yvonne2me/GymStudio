@@ -28,8 +28,8 @@ namespace GymStudioUnitTests.RepositoryTests
             {
                 Id = Guid.NewGuid(),
                 ClassName = "SaveNewClass",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 2
             };
 
@@ -52,8 +52,8 @@ namespace GymStudioUnitTests.RepositoryTests
             {
                 Id = Guid.NewGuid(),
                 ClassName = "SaveNewClass",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(numberOfClassSessions),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(numberOfClassSessions),
                 Capacity = 2
             };
 
@@ -77,8 +77,8 @@ namespace GymStudioUnitTests.RepositoryTests
             {
                 Id = Guid.NewGuid(),
                 ClassName = "SaveNewClass",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(4),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(4),
                 Capacity = expectedCapacity
             };
 

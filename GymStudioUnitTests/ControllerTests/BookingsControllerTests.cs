@@ -113,7 +113,7 @@ namespace GymStudioUnitTests.ControllerTests
             this.bookingRequest = new BookingRequest()
             {
                 Name = "MemberName",
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow.Date,
                 ClassId = Guid.NewGuid()
             };
         }

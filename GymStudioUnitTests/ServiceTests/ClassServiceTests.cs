@@ -19,10 +19,9 @@ namespace GymStudioUnitTests.ServiceTests
 
             Class newClass = new Class()
             {
-                Id = Guid.NewGuid(),
                 ClassName = "TestClassName",
-                Start_Date = DateTime.Now.AddDays(1),
-                End_Date = DateTime.Now,
+                Start_Date = DateTime.UtcNow.Date.AddDays(1),
+                End_Date = DateTime.UtcNow.Date,
                 Capacity = 10
             };
 
@@ -31,7 +30,7 @@ namespace GymStudioUnitTests.ServiceTests
 
             //Assert
             var exception = await Assert.ThrowsAsync<ArgumentException>(act);
-            Assert.Equal("Start_Date cannot occur before End_Date", exception.Message);
+            Assert.Equal("Start_Date occurs after End_Date", exception.Message);
         }
 
         [Fact]
@@ -43,10 +42,9 @@ namespace GymStudioUnitTests.ServiceTests
 
             Class newClass = new Class()
             {
-                Id = Guid.NewGuid(),
                 ClassName = null,
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
 
@@ -59,14 +57,84 @@ namespace GymStudioUnitTests.ServiceTests
         }
 
         [Fact]
+        public async void ClassService_CreateClass_ClassLimitOf30Days_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                ClassName = "TestClassName",
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(31),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("Classes would be spanning more than 30 days - Limit Reached", exception.Message);
+        }
+
+        [Fact]
+        public async void ClassService_CreateClass_HistoricalStartDateProvided_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                ClassName = "TestClassName",
+                Start_Date = DateTime.UtcNow.Date.AddDays(-2),
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("Start_Date provided is historical or not current.", exception.Message);
+        }
+
+        [Fact]
+        public async void ClassService_CreateClass_ClassIdProvided_ThrowsException()
+        {
+            //Assign
+            Mock<IClassRepository> mockClassRepository = new Mock<IClassRepository>();
+            var sut = new ClassService(mockClassRepository.Object);
+
+            Class newClass = new Class()
+            {
+                Id = Guid.NewGuid(),
+                ClassName = "TestClassName",
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
+                Capacity = 10
+            };
+
+            //Act
+            Func<Task> act = () => sut.CreateClass(newClass);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<ArgumentException>(act);
+            Assert.Equal("Id field should not be provided.", exception.Message);
+        }
+
+        [Fact]
         public async void ClassService_CreateClass_AssignsClassId()
         {
             //Assign
             Class newClass = new Class()
             {
                 ClassName = "TestClassName",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
 
@@ -91,8 +159,8 @@ namespace GymStudioUnitTests.ServiceTests
             {
                 Id = classId,
                 ClassName = "TestClassName",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
 
@@ -118,10 +186,9 @@ namespace GymStudioUnitTests.ServiceTests
 
             Class newClass = new Class()
             {
-                Id = Guid.NewGuid(),
                 ClassName = "TestClassName",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
 
@@ -144,10 +211,9 @@ namespace GymStudioUnitTests.ServiceTests
 
             Class newClass = new Class()
             {
-                Id = Guid.NewGuid(),
                 ClassName = "TestClassName",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
 
@@ -170,10 +236,9 @@ namespace GymStudioUnitTests.ServiceTests
 
             Class newClass = new Class()
             {
-                Id = Guid.NewGuid(),
                 ClassName = "TestClassName",
-                Start_Date = DateTime.Now,
-                End_Date = DateTime.Now.AddDays(1),
+                Start_Date = DateTime.UtcNow.Date,
+                End_Date = DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
 

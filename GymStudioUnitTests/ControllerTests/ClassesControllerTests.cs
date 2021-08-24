@@ -109,8 +109,8 @@ namespace GymStudioUnitTests.ControllerTests
             this.classRequest = new ClassRequest()
             {
                 ClassName = "ClassName",
-                Start_Date = System.DateTime.Now,
-                End_Date = System.DateTime.Now.AddDays(1),
+                Start_Date = System.DateTime.UtcNow.Date,
+                End_Date = System.DateTime.UtcNow.Date.AddDays(1),
                 Capacity = 10
             };
         }

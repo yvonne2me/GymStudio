@@ -27,9 +27,9 @@ namespace GymStudioApi.Services
             return await this.classRepository.SaveClass(newClass);
         }
 
-        public async Task<List<ClassSession>> GetAllClassSessions(Guid classId)
+        public async Task<Class> GetClass(Guid classId)
         {
-            return await this.classRepository.GetAllClassSessions(classId);
+            return await this.classRepository.GetClassById(classId);
         }
 
         public async Task<ClassSession> GetClassSessionsByDate(Guid classId, DateTime date)
@@ -37,15 +37,6 @@ namespace GymStudioApi.Services
             return await this.classRepository.GetClassSessionsByDate(classId, date);
         }
 
-        public bool DeleteClass(Guid classId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Class> GetClass(Guid classId)
-        {
-            return await this.classRepository.GetClassById(classId);
-        }
 
         private static void CheckClassRequestInfo(Class classRequest)
         {
@@ -54,12 +45,26 @@ namespace GymStudioApi.Services
                 throw new ArgumentException("A Class Name is required to create classes");
             }
 
-            if(classRequest.Start_Date > classRequest.End_Date)
+            if(classRequest.Start_Date.Date > classRequest.End_Date.Date)
             {
-                throw new ArgumentException("Start_Date cannot occur before End_Date");
+                throw new ArgumentException("Start_Date occurs after End_Date");
             }
 
-            //ToDo: Add limit to how far into future classes can run?
+            if(classRequest.Start_Date.Date < DateTime.UtcNow.Date)
+            {
+                throw new ArgumentException("Start_Date provided is historical or not current.");
+            }
+
+            //Limit on Classes to 30 Days to prevent large volume of ClassSessions being created
+            if((classRequest.End_Date.Date - classRequest.Start_Date.Date).Days > 30)
+            {
+                throw new ArgumentException("Classes would be spanning more than 30 days - Limit Reached");
+            }
+
+            if(classRequest.Id != Guid.Empty)
+            {
+                throw new ArgumentException("Id field should not be provided.");
+            }
         }
 
         private async Task CheckIfClassAlreadyExists(Class newClass)
