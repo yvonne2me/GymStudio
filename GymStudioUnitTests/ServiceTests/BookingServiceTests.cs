@@ -5,13 +5,13 @@ using GymStudioApi.Models.Domain;
 using GymStudioApi.Repositories;
 using GymStudioApi.Services;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System;
 
 namespace GymStudioUnitTests.ServiceTests
 {
     public class BookingServiceTests
     {
-
         Mock<IBookingRepository> mockBookingRepository;
         Mock<IClassService> mockClassService;
         Booking newBooking;
@@ -72,6 +72,33 @@ namespace GymStudioUnitTests.ServiceTests
             Assert.NotEqual(Guid.Empty, response.Id);
         }
 
+        [Fact]
+        public async void BookingService_GetBookings_ReturnsBookings()
+        {
+            //Assign
+            SetupTestInfo();
+            List<Booking> listOfBookings = new List<Booking>();
+            var anotherBooking = new Booking()
+            {
+                ClassId = this.newBooking.ClassId,
+                Name = "NameOfAnotherBookingMember",
+                Date = DateTime.UtcNow.Date
+            };
+            listOfBookings.Add(this.newBooking);
+            listOfBookings.Add(anotherBooking);
+
+            this.mockBookingRepository.Setup(r => r.GetBookings(It.IsAny<Guid>())).ReturnsAsync(listOfBookings);
+            var sut = new BookingService(this.mockClassService.Object, this.mockBookingRepository.Object);
+
+            //Act
+            var response = await sut.GetBookings(this.newBooking.ClassId);
+
+            //Assert
+            Assert.Equal(2, response.Count);
+            Assert.Equal(this.newBooking.ClassId, response[0].ClassId);
+            Assert.Equal(this.newBooking.ClassId, response[1].ClassId);
+        }
+
         private void SetupTestInfo()
         {
             this.mockBookingRepository = new Mock<IBookingRepository>();
@@ -80,7 +107,7 @@ namespace GymStudioUnitTests.ServiceTests
             {
                 ClassId = Guid.NewGuid(),
                 Name = "NameOfBookingMember",
-                Date = DateTime.Now
+                Date = DateTime.UtcNow.Date
             };
         }
     }

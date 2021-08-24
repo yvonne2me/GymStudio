@@ -23,6 +23,7 @@ These include:
     - Booking Created
     - Booking Not Available on a Date
     - Booking Not Created when Class does not exist
+    - Get Bookings Returns Bookings
 
 - Repository Tests
     - Booking successfully saved

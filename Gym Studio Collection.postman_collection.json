@@ -156,13 +156,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"POST Class - Start_Date cannot occur before End_Date - Status: 400\", function () {",
+									"pm.test(\"POST Class - Start_Date occurs after End_Date - Status: 400\", function () {",
 									"    pm.response.to.have.status(400);",
 									"});",
 									"",
-									"pm.test(\"POST Class - Start_Date cannot occur before End_Date - Error Message Returned\", function () {",
+									"pm.test(\"POST Class - Start_Date occurs after End_Date - Error Message Returned\", function () {",
 									"    var responseMessage = pm.response.json();",
-									"    pm.expect(responseMessage).to.equal(\"Start_Date cannot occur before End_Date\");",
+									"    pm.expect(responseMessage).to.equal(\"Start_Date occurs after End_Date\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -174,7 +174,7 @@
 								"exec": [
 									"var moment = require ('moment');",
 									"",
-									"pm.collectionVariables.set(\"startDateInFuture\", moment().add(10, 'day').toISOString());"
+									"pm.collectionVariables.set(\"startDateInFuture\", moment().add(10, 'day').format(\"YYYY-MM-DD\"));"
 								],
 								"type": "text/javascript"
 							}
@@ -192,6 +192,62 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{startDateInFuture}}\",\n  \"end_date\": \"{{end_date}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/classes",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - Historical Start Date - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Start_Date provided is historical or not current - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Start_Date provided is historical or not current - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage).to.equal(\"Start_Date provided is historical or not current.\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require ('moment');",
+									"",
+									"pm.collectionVariables.set(\"startDateInPast\", moment().add(-10, 'day').format(\"YYYY-MM-DD\"));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{startDateInPast}}\",\n  \"end_date\": \"{{end_date}}\",\n  \"capacity\": 3\n}"
 						},
 						"url": {
 							"raw": "{{Base_URL}}/classes",
@@ -292,6 +348,62 @@
 								"localhost"
 							],
 							"port": "5001",
+							"path": [
+								"classes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Class - More Than 30 Classes - 400",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"POST Class - Limit: More Than 30 Days - Status: 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"POST Class - Limit: More Than 30 Days - Error Message Returned\", function () {",
+									"    var responseMessage = pm.response.json();",
+									"    pm.expect(responseMessage).to.equal(\"Classes would be spanning more than 30 days - Limit Reached\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var moment = require ('moment');",
+									"",
+									"pm.collectionVariables.set(\"endDateMoreThan30Days\", moment().add(31, 'day').toISOString());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"className\": \"{{random_class_name}}\",\n  \"start_date\": \"{{start_date}}\",\n  \"end_date\": \"{{endDateMoreThan30Days}}\",\n  \"capacity\": 3\n}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/classes",
+							"host": [
+								"{{Base_URL}}"
+							],
 							"path": [
 								"classes"
 							]
@@ -511,7 +623,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"classId\": \"{{bookingClassId}}\",\n  \"name\": \"membername\",\n  \"date\": \"2021-08-23\"\n}",
+							"raw": "{\n  \"classId\": \"{{bookingClassId}}\",\n  \"name\": \"membername\",\n  \"date\": \"{{start_date}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -804,16 +916,14 @@
 								"exec": [
 									"pm.test(\"GET Booking - Status: 200\", function () {",
 									"    pm.response.to.have.status(200);",
+									"});",
 									"",
+									"pm.test('GET Bookings - Correct Class Id', () => {",
 									"    var responseMessage = pm.response.json();",
-									"",
-									"",
-									"    pm.test('GET Bookings - Correct Class Id', () => {",
-									"        _.each(responseMessage, (item) => {",
-									"            pm.expect(item.classId).to.equal(pm.collectionVariables.get('bookingClassId'))",
-									"        })",
+									"    _.each(responseMessage, (item) => {",
+									"        pm.expect(item.classId).to.equal(pm.collectionVariables.get('bookingClassId'))",
 									"    })",
-									"});"
+									"})"
 								],
 								"type": "text/javascript"
 							}
@@ -931,8 +1041,8 @@
 					"var moment = require ('moment');",
 					"",
 					"pm.collectionVariables.set(\"random_class_name\", pm.variables.replaceIn('{{$guid}}'));",
-					"pm.collectionVariables.set(\"start_date\", moment().toISOString());",
-					"pm.collectionVariables.set(\"end_date\", moment().add(2, 'day').toISOString());"
+					"pm.collectionVariables.set(\"start_date\", moment().format(\"YYYY-MM-DD\"));",
+					"pm.collectionVariables.set(\"end_date\", moment().add(2, 'day').format(\"YYYY-MM-DD\"));"
 				]
 			}
 		},
@@ -981,6 +1091,14 @@
 		},
 		{
 			"key": "class_Id_Does_Not_Exist",
+			"value": ""
+		},
+		{
+			"key": "startDateInPast",
+			"value": ""
+		},
+		{
+			"key": "endDateMoreThan30Days",
 			"value": ""
 		}
 	]

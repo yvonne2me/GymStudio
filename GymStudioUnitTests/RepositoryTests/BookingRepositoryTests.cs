@@ -28,7 +28,7 @@ namespace GymStudioUnitTests.RepositoryTests
                 Id = Guid.NewGuid(),
                 ClassId = Guid.NewGuid(),
                 Name = "SaveNewBooking",
-                Date = DateTime.Now,
+                Date = DateTime.UtcNow.Date
             };
 
             //Act
@@ -54,7 +54,7 @@ namespace GymStudioUnitTests.RepositoryTests
                     Id = Guid.NewGuid(),
                     ClassId = classId,
                     Name = "SaveNewBooking" + i,
-                    Date = DateTime.Now,
+                    Date = DateTime.UtcNow.Date
                 };
 
                 await sut.SaveBooking(saveNewBooking);
