@@ -33,7 +33,7 @@ These include:
 - Repository Tests
     - Expect Valid Class to be successfully saved
     - Expect Class Sessions to be created for a new Class and successfully saved
-    - Expect CClass Sessions to be successfully saved with correct Capacity
+    - Expect Class Sessions to be successfully saved with correct Capacity
 
 ### End To End Tests ###
 
