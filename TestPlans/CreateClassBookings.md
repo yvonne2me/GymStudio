@@ -13,21 +13,22 @@ Unit Tests will be added at a Controller, Service, and Repository Level.
 These include:
 
 - Controller Tests
-    - POST Booking - Request Valid - 200/OK
-    - POST Booking - Null Request - 400/Bad Request
-    - POST Booking - Exception Thrown - Returns Error
-    - GET Booking - Booking Exists - Return Booking
-    - GET Booking - Booking Does Not Exist - Returns Not Found
+    - Expect 200/OK for valid POST Booking request
+    - Expect 400/Bad Request for Null Booking request
+    - Expect Error Message when exception thrown during POST Booking
+    - Expect Get Booking Request to return Bookings when they exists
+    - Expect Get Booking returns NotFound when Booking does not exist
 
 - Service Tests
-    - Booking Created
-    - Booking Not Available on a Date
-    - Booking Not Created when Class does not exist
-    - Get Bookings Returns Bookings
+    - Expect Errors for the following scenarios:
+        - Booking Not Available on a Date
+        - Class Does Not Exist
+    - Expect new Booking is successfully created
+    - Expect Get Bookings Returns Bookings
 
 - Repository Tests
-    - Booking successfully saved
-    - Get Bookings returns Bookings for Class
+    - Expect valid Booking to be successfully saved
+    - Expect Get Bookings to return all Bookings for a Class
 
 ### End To End Tests ###
 
